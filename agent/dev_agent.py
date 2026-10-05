@@ -66,8 +66,8 @@ Historique des commentaires du ticket (s'il contient des retours du relecteur, c
 Respecte les règles de CLAUDE.md. Écris ou mets à jour les tests et vérifie qu'ils passent.
 Ne fais ni commit ni push : le script s'en charge."""
 
-    sh("claude", "-p", prompt, "--allowedTools", "Read,Write,Edit,Glob,Grep,Bash")
-
+    sh("claude", "-p", prompt, "--allowedTools", "Read,Write,Edit,Glob,Grep,Bash",
+   "--output-format", "stream-json", "--verbose")
     # 4. Commit et push
     sh("git", "add", "-A")
     if sh_ok("git", "diff", "--cached", "--quiet"):
