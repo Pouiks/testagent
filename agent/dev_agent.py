@@ -9,6 +9,7 @@ LIST_AGENT = os.environ["LIST_AGENT"]
 LIST_EN_COURS = os.environ["LIST_EN_COURS"]
 LIST_REVUE = os.environ["LIST_REVUE"]
 LIST_HUMAIN = os.environ["LIST_HUMAIN"]
+BASE = os.environ.get("BASE_BRANCH", "master")
 
 
 # ---------- Petits outils ----------
@@ -42,7 +43,11 @@ def traiter(card):
     card_id = card["id"]
     branche = f"ticket-{card['shortLink']}"
 
-    # 1. Branche : on reprend celle qui existe (retour du relecteur) ou on en crée une
+    # 1. On repart toujours d'une base propre, puis on reprend la branche du ticket
+    #    si elle existe (retour du relecteur) ou on en crée une nouvelle
+    sh("git", "checkout", "-f", BASE)
+    sh("git", "reset", "--hard", f"origin/{BASE}")
+    sh("git", "clean", "-fd")
     if sh_ok("git", "ls-remote", "--exit-code", "--heads", "origin", branche):
         sh("git", "checkout", branche)
     else:
@@ -67,7 +72,8 @@ Respecte les règles de CLAUDE.md. Écris ou mets à jour les tests et vérifie 
 Ne fais ni commit ni push : le script s'en charge."""
 
     sh("claude", "-p", prompt, "--allowedTools", "Read,Write,Edit,Glob,Grep,Bash",
-   "--output-format", "stream-json", "--verbose")
+       "--output-format", "stream-json", "--verbose")
+
     # 4. Commit et push
     sh("git", "add", "-A")
     if sh_ok("git", "diff", "--cached", "--quiet"):
@@ -91,21 +97,29 @@ Ne fais ni commit ni push : le script s'en charge."""
 
 
 def main():
-    cartes = trello("GET", f"/lists/{LIST_AGENT}/cards")
-    if not cartes:
-        print("Aucun ticket à traiter.")
-        return
+    echecs = 0
+    while True:
+        # On relit la colonne à chaque tour : des cartes ont pu être ajoutées entre-temps
+        cartes = trello("GET", f"/lists/{LIST_AGENT}/cards")
+        if not cartes:
+            print("Plus aucun ticket à traiter.")
+            break
 
-    carte = cartes[0]  # un ticket par passage
-    print(f"Ticket pris en charge : {carte['name']}")
-    deplacer(carte["id"], LIST_EN_COURS)
+        carte = cartes[0]  # la carte du haut de la colonne passe en premier
+        print(f"\n===== Ticket pris en charge : {carte['name']} =====")
+        deplacer(carte["id"], LIST_EN_COURS)
 
-    try:
-        traiter(carte)
-    except Exception as e:
-        deplacer(carte["id"], LIST_HUMAIN)
-        commenter(carte["id"], f"🤖 Agent développeur : échec, intervention humaine nécessaire.\n{e}")
-        raise
+        try:
+            traiter(carte)
+        except Exception as e:
+            echecs += 1
+            print(f"Échec sur ce ticket : {e}")
+            deplacer(carte["id"], LIST_HUMAIN)
+            commenter(carte["id"], f"🤖 Agent développeur : échec, intervention humaine nécessaire.\n{e}")
+            # on passe au ticket suivant au lieu de tout arrêter
+
+    if echecs:
+        raise SystemExit(f"{echecs} ticket(s) en échec, voir la colonne Besoin d'un humain.")
 
 
 if __name__ == "__main__":
