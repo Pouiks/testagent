@@ -1,3 +1,5 @@
+import { Layers } from 'lucide-react'
+
 import { Badge } from '@/components/ui/badge'
 import {
   Card,
@@ -37,24 +39,32 @@ const segments = [
 export function SegmentsPage() {
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Segments</h1>
-        <p className="text-sm text-muted-foreground">
-          Audiences dynamiques, recalculées en continu à partir des profils
-          clients.
-        </p>
+      <div className="flex items-center gap-3">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <Layers className="size-5" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-semibold">Segments</h1>
+          <p className="text-sm text-muted-foreground">
+            Audiences dynamiques, recalculées en continu à partir des
+            profils clients.
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         {segments.map((segment) => (
-          <Card key={segment.name}>
+          <Card
+            key={segment.name}
+            className="transition-shadow hover:shadow-md"
+          >
             <CardHeader className="flex flex-row items-start justify-between">
               <div>
                 <CardTitle>{segment.name}</CardTitle>
                 <CardDescription>{segment.condition}</CardDescription>
               </div>
               <Badge
-                variant={segment.status === 'Actif' ? 'default' : 'outline'}
+                variant={segment.status === 'Actif' ? 'success' : 'warning'}
               >
                 {segment.status}
               </Badge>

@@ -1,3 +1,5 @@
+import { Users } from 'lucide-react'
+
 import { Badge } from '@/components/ui/badge'
 import {
   Card,
@@ -49,12 +51,17 @@ const profiles = [
 export function ProfilesPage() {
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Profils clients</h1>
-        <p className="text-sm text-muted-foreground">
-          Vue 360° de chaque client, reconstruite à partir de toutes vos
-          sources de données.
-        </p>
+      <div className="flex items-center gap-3">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <Users className="size-5" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-semibold">Profils clients</h1>
+          <p className="text-sm text-muted-foreground">
+            Vue 360° de chaque client, reconstruite à partir de toutes vos
+            sources de données.
+          </p>
+        </div>
       </div>
 
       <Card>
@@ -95,7 +102,7 @@ export function ProfilesPage() {
                     </div>
                   </TableCell>
                   <TableCell>{profile.lastSeen}</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right font-medium">
                     {profile.lifetimeValue}
                   </TableCell>
                 </TableRow>

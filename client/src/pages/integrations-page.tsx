@@ -1,3 +1,5 @@
+import { Plug } from 'lucide-react'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -39,17 +41,25 @@ const integrations = [
 export function IntegrationsPage() {
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Intégrations</h1>
-        <p className="text-sm text-muted-foreground">
-          Destinations connectées pour activer les données client dans vos
-          autres outils.
-        </p>
+      <div className="flex items-center gap-3">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <Plug className="size-5" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-semibold">Intégrations</h1>
+          <p className="text-sm text-muted-foreground">
+            Destinations connectées pour activer les données client dans vos
+            autres outils.
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         {integrations.map((integration) => (
-          <Card key={integration.name}>
+          <Card
+            key={integration.name}
+            className="transition-shadow hover:shadow-md"
+          >
             <CardHeader className="flex flex-row items-start justify-between">
               <div>
                 <CardTitle>{integration.name}</CardTitle>
@@ -57,7 +67,7 @@ export function IntegrationsPage() {
               </div>
               <Badge
                 variant={
-                  integration.status === 'Connectée' ? 'default' : 'outline'
+                  integration.status === 'Connectée' ? 'success' : 'warning'
                 }
               >
                 {integration.status}
