@@ -21,7 +21,9 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1.5">
-          <Database className="size-5 text-primary" />
+          <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <Database className="size-4" />
+          </div>
           <span className="text-sm font-semibold">Pulse CDP</span>
         </div>
       </SidebarHeader>
@@ -42,6 +44,7 @@ export function AppSidebar() {
                       isActive={isActive}
                       tooltip={item.title}
                       render={<NavLink to={item.url} />}
+                      className="data-active:bg-sidebar-primary data-active:text-sidebar-primary-foreground data-active:shadow-sm"
                     >
                       <item.icon />
                       <span>{item.title}</span>
